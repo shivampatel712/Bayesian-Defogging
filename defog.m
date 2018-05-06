@@ -25,9 +25,7 @@ function [final_albedo, final_depth] = defog(image, albedo_output, depth_output,
     if verbose
         display(['Saving depth to ', depth_output, '...']);
     end
-    imwrite(depth_output,1-final_depth./max(max(max(final_depth))));
-    
-    
+    imwrite(depth_output,1-final_depth./max(max(max(final_depth))));        
 end
 
     
