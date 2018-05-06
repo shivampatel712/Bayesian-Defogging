@@ -1,0 +1,13 @@
+function [final_albedo, final_depth] = defog(input_image, albedo_output, depth_output, outer_iters, inner_iters, final_airlight, albedo_prior_weight, depth_prior_weight, depth_prior_type, multi_scale, save_initial_depth, verbose)
+    if save_initial_depth
+        z(1,1,:) = airlight;
+        I_n = image./repmat(z,size(image,1),size(image,2),1);
+        I_n = I_n./max(max(max(I_n)));
+        d = compute_initial_depth(I_n);
+        imwrite('initial_depth.png',1-d./max(max(max(d))));
+    end
+    
+    if multi_scale
+        scales = [0.5, 1.0];
+        [final_albedo, final_depth] = factorize_multiscale(image, airlight,)
+end
