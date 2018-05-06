@@ -6,7 +6,7 @@ clear all;
 image_name = 'pumpkins-input.png';
 albedo_output = 'final_albedo.png';
 depth_output = 'final_depth.png';
-outer_iters = 3;
+outer_iters = 1;
 inner_iters = 20;
 airlight_provide = false;
 airlight = [0.5; 0.5; 0.5];
@@ -43,6 +43,6 @@ else
 end
 
 %%%%% Main function call.
-[~,~] = defog(input_image, albedo_output, depth_output, outer_iters, inner_iters, ...
+[final_albedo,final_depth] = defog(input_image, albedo_output, depth_output, outer_iters, inner_iters, ...
       final_airlight, albedo_prior_weight, depth_prior_weight, ...
       depth_prior_type, multi_scale, save_initial_depth, verbose);

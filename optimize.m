@@ -10,11 +10,12 @@ function [final_albedo, final_depth] = optimize(I_n, apow, ascale, initial_albed
     l = l*1e-3;
     u(3*npix+1:end) = Inf;
     if verbose
-        options = struct('m',16,'tol',1e-6,'max_iters',iters, 'display', true);
+        options = optimoptions('fmincon', 'Algorithm', 'interior-point', 'Hessian', {'lbfgs', 16}, 'HessFcn', [], 'HessMult', [], 'GradObj', 'on', 'MaxFunEvals', iters, 'TolProjCGAbs', 1e-8, 'Display', 'iter');
     else
-        options = struct('m',16,'tol',1e-6,'max_iters',iters, 'display', false);
+        options = optimoptions('fmincon', 'HessianApproximation', {'lbfgs', 16}, 'SpecifyObjectiveGradient', true, 'MaxFunctionEvaluations', iters, 'TolProjCGAbs', 1e-8);
     end
-    x_opt = LBFGSB(f_and_g, x0, l, u, options);
+    display(1)
+    x_opt = fmincon(f_and_g, x0, [], [], [], [], l, u, [], options);
     
     final_albedo = reshape(x_opt(1:3*npix), size(I_n));
     final_depth = reshape(x_opt(3*npix+1:end), size(initial_depth));

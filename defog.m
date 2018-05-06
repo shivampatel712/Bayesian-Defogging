@@ -21,7 +21,7 @@ function [final_albedo, final_depth] = defog(image, albedo_output, depth_output,
     if verbose
         display(['Saving albedo to ', albedo_output, '...']);
     end
-    imwrite(final_albeo.*255, albedo_output);
+    imwrite(final_albedo.*255, albedo_output);
     if verbose
         display(['Saving depth to ', depth_output, '...']);
     end
