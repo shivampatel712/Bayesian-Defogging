@@ -1,45 +1,60 @@
-Image=double(imread('pumpkins-input.png'));
-Image = Image./255.0;
-%image(Image)
-%InitialDepth=max(Image,[],3);
-%imshow(InitialDepth,[])
-IntensitySum=sum(Image,3);
-ChromR=Image(:,:,1)./IntensitySum;
-ChromB=Image(:,:,2)./IntensitySum;
-ChromG=Image(:,:,3)./IntensitySum;
-Chrom=cat(3,ChromR,ChromB,ChromG);
-[RGx,RGy]=imgradientxy(ChromR);
-[BGx,BGy]=imgradientxy(ChromB);
-[GGx,GGy]=imgradientxy(ChromG);
-% [Gx,Gy]=imgradientxy(Chrom);
-% RDta=vertcat(RGx,RGy);
-% BDta=vertcat(BGx,BGy);
-% GDta=vertcat(GGx,GGy);
-% RDta=RDta/8.0;
-% BDta=BDta/8.0;
-% GDta=GDta/8.0;
-% RDta(RDta>0.25)=[];
-% RDta(RDta<-0.25)=[];
-% BDta(BDta>0.25)=[];
-% BDta(BDta<-0.25)=[];
-% GDta(GDta>0.25)=[];
-% GDta(GDta<-0.25)=[];
-% [RCount,RValue]=histcounts(RDta,128);
-% [BCount,BValue]=histcounts(BDta,128);
-% [GCount,GValue]=histcounts(GDta,128);
-% RCount=RCount./sum(RCount);
-% BCount=BCount./sum(BCount);
-% GCount=GCount./sum(GCount);
-% RW=abs(RValue(2) - RValue(1))/2.0;
-% BW=abs(BValue(2) - BValue(1))/2.0;
-% GW=abs(GValue(2) - GValue(1))/2.0;
-% RVal=RValue(1:128)+RW;
-% BVal=BValue(1:128)+BW;
-% GVal=GValue(1:128)+GW;
-% 
-% fun = @(x,xdata)exp((-(xdata.^x(1)))/x(2));
-% 
-% options = optimoptions('lsqcurvefit','Algorithm','levenberg-marquardt');
-% lb = [];
-% ub = [];
-% x=lsqcurvefit(fun,[0.25,0.25],RVal,RCount,lb,ub,options);
+function [power, scale] = fit_epd(image)
+%     Image=double(imread('pumpkins-input.png'));
+%     Image = Image./255.0;
+    %image(Image)
+    %InitialDepth=max(Image,[],3);
+    %imshow(InitialDepth,[])
+    IntensitySum=sum(image,3);
+    ChromR=image(:,:,1)./IntensitySum;
+    ChromB=image(:,:,2)./IntensitySum;
+    ChromG=image(:,:,3)./IntensitySum;
+    % Chrom=cat(3,ChromR,ChromB,ChromG);
+    [RGx,RGy]=imgradientxy(ChromR);
+    [BGx,BGy]=imgradientxy(ChromB);
+    [GGx,GGy]=imgradientxy(ChromG);
+    % [Gx,Gy]=imgradientxy(Chrom);
+    RGx=RGx/8.0;
+    RGy=RGy/8.0;
+    BGx=BGx/8.0;
+    BGy=BGy/8.0;
+    GGx=GGx/8.0;
+    GGy=GGy/8.0;
+    RGx(RGx>0.25)=[];
+    RGx(RGx<-0.25)=[];
+    BGx(BGx>0.25)=[];
+    BGx(BGx<-0.25)=[];
+    GGx(GGx>0.25)=[];
+    GGx(GGx<-0.25)=[];
+    RGy(RGy>0.25)=[];
+    RGy(RGy<-0.25)=[];
+    BGy(BGy>0.25)=[];
+    BGy(BGy<-0.25)=[];
+    GGy(GGy>0.25)=[];
+    GGy(GGy<-0.25)=[];
+    RDta=vertcat(RGx,RGy);
+    BDta=vertcat(BGx,BGy);
+    GDta=vertcat(GGx,GGy);
+    [RCount,RValue]=histcounts(RDta,128);
+    [BCount,BValue]=histcounts(BDta,128);
+    [GCount,GValue]=histcounts(GDta,128);
+    RCount=RCount./sum(RCount);
+    BCount=BCount./sum(BCount);
+    GCount=GCount./sum(GCount);
+    RW=abs(RValue(2) - RValue(1))/2.0;
+    BW=abs(BValue(2) - BValue(1))/2.0;
+    GW=abs(GValue(2) - GValue(1))/2.0;
+    RVal=RValue(1:128)+RW;
+    BVal=BValue(1:128)+BW;
+    GVal=GValue(1:128)+GW;
+
+    fun = @(x,xdata)exp((-(xdata.^x(1)))/x(2));
+
+    options = optimoptions('lsqcurvefit','Algorithm','levenberg-marquardt');
+    lb = [];
+    ub = [];
+    Rx=abs(lsqcurvefit(fun,[0.25,0.25],RVal,RCount,lb,ub,options));
+    Bx=abs(lsqcurvefit(fun,[0.25,0.25],BVal,BCount,lb,ub,options));
+    Gx=abs(lsqcurvefit(fun,[0.25,0.25],GVal,GCount,lb,ub,options));
+    power = [Rx(1), Bx(1), Gx(1)];
+    scale = [Rx(2), Bx(2), Gx(2)];
+end

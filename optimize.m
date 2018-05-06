@@ -9,11 +9,10 @@ function [final_albedo, final_depth] = optimize(I_n, apow, ascale, initial_albed
     u = ones(4*npix ,1);
     l = l*1e-3;
     u(3*npix+1:end) = Inf;
-    options = optimset('m',16,'tol',1e-8,'max_iters',iters);
     if verbose
-        options = optimset(options, 'display', true);
-    else 
-        options = optimset(options, 'display', false);
+        options = struct('m',16,'tol',1e-6,'max_iters',iters, 'display', true);
+    else
+        options = struct('m',16,'tol',1e-6,'max_iters',iters, 'display', false);
     end
     x_opt = LBFGSB(f_and_g, x0, l, u, options);
     

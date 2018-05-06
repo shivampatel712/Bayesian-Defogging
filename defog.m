@@ -5,14 +5,14 @@ function [final_albedo, final_depth] = defog(image, albedo_output, depth_output,
         I_n = image./repmat(z,size(image,1),size(image,2),1);
         I_n = I_n./max(max(max(I_n)));
         d = compute_initial_depth(I_n);
-        imwrite('initial_depth.png',1-d./max(max(max(d))));
+        imwrite(1-d./max(max(max(d))), 'initial_depth.png');
     end
     
     if multi_scale
         scales = [0.5, 1.0];
         [final_albedo, final_depth] = factorize_multiscale(image, final_airlight, scales, outer_iters, inner_iters, verbose, albedo_prior_weight, depth_prior_weight, depth_prior_type);
     else
-        [final_albedo, final_depth] = factorize_multiscale(image, final_airlight,d ,0 , outer_iters, inner_iters, verbose, albedo_prior_weight, depth_prior_weight, depth_prior_type);
+        [final_albedo, final_depth] = factorize(image, final_airlight,d ,0 , outer_iters, inner_iters, verbose, albedo_prior_weight, depth_prior_weight, depth_prior_type);
     end
     
     final_albedo = final_albedo./max(max(max(final_albedo)));
@@ -21,11 +21,11 @@ function [final_albedo, final_depth] = defog(image, albedo_output, depth_output,
     if verbose
         display(['Saving albedo to ', albedo_output, '...']);
     end
-    imwrite(albedo_output, final_albeo.*255);
+    imwrite(final_albeo.*255, albedo_output);
     if verbose
         display(['Saving depth to ', depth_output, '...']);
     end
-    imwrite(depth_output,1-final_depth./max(max(max(final_depth))));        
+    imwrite(1-final_depth./max(max(max(final_depth))), depth_output);        
 end
 
     

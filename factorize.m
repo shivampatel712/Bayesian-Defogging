@@ -2,9 +2,9 @@ function [A, D] = factorize(image, airlight,initial_depth, is_initial_depth, n_o
     [apow, ascale] = fit_epd(image);
     
     I_n = image;
-    I_n(:,:,1) = image(:,:,1)./airlight(1,1);
-    I_n(:,:,2) = image(:,:,2)./airlight(1,2);
-    I_n(:,:,3) = image(:,:,3)./airlight(1,3);
+    I_n(:,:,1) = image(:,:,1)./airlight(1);
+    I_n(:,:,2) = image(:,:,2)./airlight(2);
+    I_n(:,:,3) = image(:,:,3)./airlight(3);
     I_n = I_n./max(max(max(image)));
     
     z(1,1,:) = airlight;
