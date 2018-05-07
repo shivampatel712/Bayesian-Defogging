@@ -1,6 +1,6 @@
 function Value = albedo_prior_grad(albedo, power, scale)
-    
-    color_sum = sum(sum(sum(repmat(albedo,1,1,3),3)));
+    color_sum = sum(albedo,3);
+    color_sum = repmat(color_sum, 1, 1, 3);
     chromaticity = (color_sum>1e-8).*albedo./color_sum;
     [P, Q, R, S] = grid_diff(chromaticity);
     X(1,1,:)=power;

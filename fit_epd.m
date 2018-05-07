@@ -1,24 +1,18 @@
-function [power, scale] = fit_epd(image)
-%     Image=double(imread('pumpkins-input.png'));
-%     Image = Image./255.0;
-    %image(Image)
-    %InitialDepth=max(Image,[],3);
-    %imshow(InitialDepth,[])
-    IntensitySum=sum(image,3);
-    ChromR=image(:,:,1)./IntensitySum;
-    ChromB=image(:,:,2)./IntensitySum;
-    ChromG=image(:,:,3)./IntensitySum;
-    % Chrom=cat(3,ChromR,ChromB,ChromG);
+function [power, scale] = fit_epd(Image)
+    IntensitySum=sum(Image,3);
+    ChromR=Image(:,:,1)./IntensitySum;
+    ChromB=Image(:,:,2)./IntensitySum;
+    ChromG=Image(:,:,3)./IntensitySum;
     [RGx,RGy]=imgradientxy(ChromR);
     [BGx,BGy]=imgradientxy(ChromB);
     [GGx,GGy]=imgradientxy(ChromG);
-    % [Gx,Gy]=imgradientxy(Chrom);
     RGx=RGx/8.0;
     RGy=RGy/8.0;
     BGx=BGx/8.0;
     BGy=BGy/8.0;
     GGx=GGx/8.0;
     GGy=GGy/8.0;
+    sum(sum(RGy > 0.25))
     RGx(RGx>0.25)=[];
     RGx(RGx<-0.25)=[];
     BGx(BGx>0.25)=[];
@@ -34,9 +28,14 @@ function [power, scale] = fit_epd(image)
     RDta=vertcat(RGx,RGy);
     BDta=vertcat(BGx,BGy);
     GDta=vertcat(GGx,GGy);
-    [RCount,RValue]=histcounts(RDta,128);
-    [BCount,BValue]=histcounts(BDta,128);
-    [GCount,GValue]=histcounts(GDta,128);
+    edges=-64:64;
+    edges=edges./256;
+    [RCount]=histcounts(RDta,edges);
+    [BCount]=histcounts(BDta,edges);
+    [GCount]=histcounts(GDta,edges);
+    RValue=edges;
+    BValue=edges;
+    GValue=edges;
     RCount=RCount./sum(RCount);
     BCount=BCount./sum(BCount);
     GCount=GCount./sum(GCount);
@@ -47,7 +46,7 @@ function [power, scale] = fit_epd(image)
     BVal=BValue(1:128)+BW;
     GVal=GValue(1:128)+GW;
 
-    fun = @(x,xdata)exp((-(xdata.^x(1)))/x(2));
+    fun = @(x,xdata)exp((-(abs(xdata).^x(1)))./x(2));
 
     options = optimoptions('lsqcurvefit','Algorithm','levenberg-marquardt');
     lb = [];

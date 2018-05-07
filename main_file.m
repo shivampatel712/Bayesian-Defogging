@@ -3,14 +3,15 @@ clc;
 clear all;
 
 %%%%% Please change variables here.
+digitsOld = digits(8);
 image_name = 'pumpkins-input.png';
 albedo_output = 'final_albedo.png';
 depth_output = 'final_depth.png';
 outer_iters = 1;
-inner_iters = 20;
-airlight_provide = false;
-airlight = [0.5; 0.5; 0.5];
-airlight_rect_provide = true;
+inner_iters = 15;
+airlight_provide = true;
+airlight = double([vpa(0.69496936),0.75965686,0.8145159]);
+airlight_rect_provide = false;
 airlight_rect = [92, 19, 28, 16];
 albedo_prior_weight = 2e-6;
 depth_prior_weight = 1;
