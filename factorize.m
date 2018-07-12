@@ -18,3 +18,4 @@ function [A, D] = factorize(image, airlight,initial_depth, is_initial_depth, n_o
         [A,D] = optimize(I_n, apow, ascale, A, D, 'D', n_inner_iterations, verbose, albedo_prior_weight, depth_prior_weight, depth_prior_type);
     end
 end
+% Machaya Patel
